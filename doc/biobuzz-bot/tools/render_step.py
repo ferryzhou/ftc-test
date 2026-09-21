@@ -173,8 +173,13 @@ def main():
         ("Top (+Z)", np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])),
         ("Isometric", None),
     ]
-    iso = rot_x(-62) @ rot_z(-35)          # tilt then turn
-    R_iso = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]]) @ rot_x(-28) @ rot_z(-40)
+    # isometric: viewer in front-right-above (-Y is the intake side)
+    v = np.array([0.62, -0.62, 0.48])
+    v /= np.linalg.norm(v)
+    right = np.cross([0, 0, 1.0], v)
+    right /= np.linalg.norm(right)
+    up = np.cross(v, right)
+    R_iso = np.array([right, up, v])
     fig, axes = plt.subplots(2, 2, figsize=(16, 13), facecolor=SURFACE)
     for ax, (name, R) in zip(axes.reshape(-1), views):
         if R is None:
