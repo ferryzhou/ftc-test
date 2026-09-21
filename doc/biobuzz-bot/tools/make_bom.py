@@ -14,8 +14,8 @@ STARTER = os.path.join(ROOT, "..", "gobilda-3200-2627-0004", "bom_purchase.csv")
 DELTA = os.path.join(ROOT, "bom_delta.csv")
 OUT = os.path.join(ROOT, "bom_biobuzz_bot.csv")
 
-# The 5-hole low channel on top of the towers is replaced, not added.
-REMOVED = {"1121-0005-0144": 1}
+# Nothing from the kit is removed: the towers simply move two holes outboard on the base rails.
+REMOVED = {}
 
 
 def main():
@@ -34,7 +34,7 @@ def main():
             row["purpose"] = r["purpose"]
     for sku, q in REMOVED.items():
         rows[sku]["removed_qty"] += q
-        rows[sku]["purpose"] = "removed: replaced by 1121-0007-0192"
+        rows[sku]["purpose"] = "removed"
     for row in rows.values():
         row["total_qty"] = row["starter_kit_qty"] + row["added_qty"] - row["removed_qty"]
     order = ["sku", "name", "category", "starter_kit_qty", "added_qty", "removed_qty", "total_qty", "purpose", "source"]

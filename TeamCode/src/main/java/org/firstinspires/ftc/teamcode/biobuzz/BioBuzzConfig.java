@@ -37,10 +37,12 @@ public final class BioBuzzConfig {
     // 1250 t/s = 2678 rpm = 13.5 m/s Hogback surface speed. goBILDA's stock POLLEN values.
     public static final int LAUNCH_VELOCITY_POLLEN = 1250;
     public static final int LAUNCH_MIN_VELOCITY_POLLEN = 1200;
-    // NECTAR has the same ballistic coefficient as POLLEN (see doc/biobuzz-bot/README.md), so it
-    // needs the same exit speed; the extra 4% covers the larger speed droop of the heavier ball.
-    public static final int LAUNCH_VELOCITY_NECTAR = 1300;
-    public static final int LAUNCH_MIN_VELOCITY_NECTAR = 1250;
+    // NECTAR has the same ballistic coefficient as POLLEN (see doc/biobuzz-bot/README.md), so the
+    // same exit speed lands it on the same spot. Keep the two targets equal: the shot simulation
+    // showed a 4% higher NECTAR target moves its landing point 0.4 m further out. The heavier
+    // ball's larger droop is handled by waiting for the wheel to recover before the next feed.
+    public static final int LAUNCH_VELOCITY_NECTAR = 1250;
+    public static final int LAUNCH_MIN_VELOCITY_NECTAR = 1200;
     // PIDF for RUN_USING_ENCODER on the 1:1 launcher motor (goBILDA's tuned values).
     public static final double LAUNCH_P = 40, LAUNCH_I = 0, LAUNCH_D = 0, LAUNCH_F = 12.5;
 
