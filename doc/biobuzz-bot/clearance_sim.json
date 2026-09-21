@@ -1,0 +1,242 @@
+{
+ "hood_gap_vs_angle_deg_mm": [
+  [
+   0,
+   47.53
+  ],
+  [
+   1,
+   45.84
+  ],
+  [
+   2,
+   44.12
+  ],
+  [
+   3,
+   42.38
+  ],
+  [
+   4,
+   40.63
+  ],
+  [
+   5,
+   38.93
+  ],
+  [
+   6,
+   37.1
+  ],
+  [
+   7,
+   35.26
+  ],
+  [
+   8,
+   33.41
+  ],
+  [
+   9,
+   31.52
+  ],
+  [
+   10,
+   29.63
+  ],
+  [
+   11,
+   27.67
+  ],
+  [
+   12,
+   25.7
+  ],
+  [
+   13,
+   23.74
+  ],
+  [
+   14,
+   21.74
+  ],
+  [
+   15,
+   19.72
+  ]
+ ],
+ "nectar_hood_angle_deg": null,
+ "stations": [
+  {
+   "ball": "POLLEN 71",
+   "station": "intake mouth, on the tiles in front of the roller bar",
+   "x": 0.0,
+   "y": -160.0,
+   "z_above_tiles": 35.5,
+   "clearance_mm": -11.0,
+   "nearest": "3618-4008-0016 (Stretched over 8 REX):8"
+  },
+  {
+   "ball": "POLLEN 71",
+   "station": "under the Gecko conveyor, on the tiles",
+   "x": 0.0,
+   "y": -185.5,
+   "z_above_tiles": 35.5,
+   "clearance_mm": -6.4,
+   "nearest": "3613-4008-0048:5"
+  },
+  {
+   "ball": "POLLEN 71",
+   "station": "on the intake ramp E",
+   "x": 0.0,
+   "y": -60.0,
+   "z_above_tiles": 77.0,
+   "clearance_mm": -24.5,
+   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+  },
+  {
+   "ball": "POLLEN 71",
+   "station": "hopper floor in front of the wheel",
+   "x": -5.0,
+   "y": -35.0,
+   "z_above_tiles": 76.0,
+   "clearance_mm": -7.6,
+   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+  },
+  {
+   "ball": "POLLEN 71",
+   "station": "exit guide between the side walls",
+   "x": 0.0,
+   "y": 140.0,
+   "z_above_tiles": 185.6,
+   "clearance_mm": 17.4,
+   "nearest": "3626-0014-0096:1"
+  },
+  {
+   "ball": "POLLEN 71",
+   "station": "launcher squeeze, hood POLLEN position",
+   "clearance_mm": -23.6,
+   "nearest": "3626-0014-0096 / Gridplate H"
+  },
+  {
+   "ball": "POLLEN 71",
+   "station": "launcher squeeze, hood NECTAR position",
+   "clearance_mm": -3.1,
+   "nearest": "3626-0014-0096 / Gridplate H"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "intake mouth, on the tiles in front of the roller bar",
+   "x": 0.0,
+   "y": -160.0,
+   "z_above_tiles": 46.0,
+   "clearance_mm": -22.4,
+   "nearest": "3618-4008-0016 (Stretched over 8 REX):8"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "under the Gecko conveyor, on the tiles",
+   "x": 0.0,
+   "y": -185.5,
+   "z_above_tiles": 46.0,
+   "clearance_mm": -27.0,
+   "nearest": "3613-4008-0048:5"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "on the intake ramp E",
+   "x": 0.0,
+   "y": -60.0,
+   "z_above_tiles": 87.4,
+   "clearance_mm": -37.8,
+   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "hopper floor in front of the wheel",
+   "x": -5.0,
+   "y": -35.0,
+   "z_above_tiles": 86.4,
+   "clearance_mm": -19.3,
+   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "exit guide between the side walls",
+   "x": 0.0,
+   "y": 140.0,
+   "z_above_tiles": 195.9,
+   "clearance_mm": 9.1,
+   "nearest": "3626-0014-0096:1"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "launcher squeeze, hood POLLEN position",
+   "clearance_mm": -44.4,
+   "nearest": "3626-0014-0096 / Gridplate H"
+  },
+  {
+   "ball": "NECTAR 92",
+   "station": "launcher squeeze, hood NECTAR position",
+   "clearance_mm": -23.9,
+   "nearest": "3626-0014-0096 / Gridplate H"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "intake mouth, on the tiles in front of the roller bar",
+   "x": 0.0,
+   "y": -160.0,
+   "z_above_tiles": 47.5,
+   "clearance_mm": -23.7,
+   "nearest": "3618-4008-0016 (Stretched over 8 REX):8"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "under the Gecko conveyor, on the tiles",
+   "x": 0.0,
+   "y": -185.5,
+   "z_above_tiles": 47.5,
+   "clearance_mm": -30.0,
+   "nearest": "3613-4008-0048:5"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "on the intake ramp E",
+   "x": 0.0,
+   "y": -60.0,
+   "z_above_tiles": 89.0,
+   "clearance_mm": -39.4,
+   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "hopper floor in front of the wheel",
+   "x": -5.0,
+   "y": -35.0,
+   "z_above_tiles": 88.0,
+   "clearance_mm": -20.8,
+   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "exit guide between the side walls",
+   "x": 0.0,
+   "y": 140.0,
+   "z_above_tiles": 197.5,
+   "clearance_mm": 7.9,
+   "nearest": "3626-0014-0096:1"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "launcher squeeze, hood POLLEN position",
+   "clearance_mm": -47.5,
+   "nearest": "3626-0014-0096 / Gridplate H"
+  },
+  {
+   "ball": "NECTAR 95 (oversize)",
+   "station": "launcher squeeze, hood NECTAR position",
+   "clearance_mm": -27.0,
+   "nearest": "3626-0014-0096 / Gridplate H"
+  }
+ ]
+}

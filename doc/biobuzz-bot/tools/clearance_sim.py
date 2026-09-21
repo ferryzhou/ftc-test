@@ -171,7 +171,7 @@ def main():
 
     # ---- 1. hood gap vs flap angle ----
     gaps = []
-    for deg in range(0, 16, 1):
+    for deg in range(-16, 5, 1):
         a = math.radians(deg)
         R = np.array([[1, 0, 0], [0, math.cos(a), -math.sin(a)], [0, math.sin(a), math.cos(a)]])
         pivot = np.array([0.0, hinge_y, hinge_z])
@@ -179,25 +179,27 @@ def main():
         g = mesh_to_mesh_distance(rot, wheel)
         gaps.append((deg, round(float(g), 2)))
     print("hood flap angle sweep (Gridplate H to Hogback wheel):", ", ".join(f"{d}°:{g:.1f}" for d, g in gaps))
+    stock_gap = dict(gaps)[0]
     nectar_angle = None
     for (a0, g0), (a1, g1) in zip(gaps, gaps[1:]):
         if min(g0, g1) <= NECTAR_GAP <= max(g0, g1) and g1 != g0:
             nectar_angle = a0 + (NECTAR_GAP - g0) / (g1 - g0) * (a1 - a0)
             break
-    print(f"stock gap {gaps[0][1]:.1f} mm; {NECTAR_GAP} mm gap at flap angle "
+    print(f"stock gap {stock_gap:.1f} mm; {NECTAR_GAP} mm gap at flap angle "
           f"{'not reached' if nectar_angle is None else f'{nectar_angle:.1f} deg'}, {time.time() - t0:.0f}s")
 
     fig, ax = plt.subplots(figsize=(7, 4), facecolor=SURFACE)
     style(ax)
     ax.plot([d for d, _ in gaps], [g for _, g in gaps], color=BLUE, lw=2, marker="o", ms=4)
     ax.axhline(NECTAR_GAP, color=AXIS, ls="--", lw=1)
-    ax.text(0.3, NECTAR_GAP + 1, "NECTAR gap 68 mm", color=INK2, fontsize=9)
-    ax.axhline(gaps[0][1], color=AXIS, ls=":", lw=1)
-    ax.text(0.3, gaps[0][1] + 1, f"stock POLLEN gap {gaps[0][1]:.0f} mm", color=INK2, fontsize=9)
+    ax.text(-15.5, NECTAR_GAP + 1, "NECTAR gap 68 mm", color=INK2, fontsize=9)
+    ax.axhline(stock_gap, color=AXIS, ls=":", lw=1)
+    ax.text(-15.5, stock_gap + 1, f"stock POLLEN gap {stock_gap:.0f} mm", color=INK2, fontsize=9)
+    ax.axvline(0, color=AXIS, lw=0.8)
     if nectar_angle is not None:
         ax.axvline(nectar_angle, color=AXIS, ls="--", lw=1)
-        ax.text(nectar_angle + 0.3, gaps[0][1] - 6, f"{nectar_angle:.1f}°", color=INK2, fontsize=9)
-    ax.set_xlabel("hood flap angle about its top hinge, degrees", color=INK2)
+        ax.text(nectar_angle + 0.3, stock_gap - 8, f"NECTAR position {nectar_angle:.1f}°", color=INK2, fontsize=9)
+    ax.set_xlabel("hood flap angle about its top hinge, degrees (negative lifts the front edge)", color=INK2)
     ax.set_ylabel("gap to the Hogback wheel, mm", color=INK2)
     ax.set_title("Hood servo travel needed for NECTAR", loc="left", color=INK, fontsize=11)
     plt.tight_layout()
@@ -231,24 +233,51 @@ def main():
                 lo = mid
         return hi
 
-    stations = [
-        ("intake mouth, on the tiles in front of the roller bar", 0.0, -160.0, ()),
-        ("under the Gecko conveyor, on the tiles", 0.0, -185.5, ()),
-        ("on the intake ramp E", 0.0, -60.0, ("1117-0088-0352 (3200-2627-0004_E)",)),
-        ("hopper floor in front of the wheel", -5.0, -35.0, ("1117-0088-0352 (3200-2627-0004_E)", "1117-0088-0352 (3200-2627-0004_F)")),
-        ("exit guide between the side walls", 0.0, 140.0, ("1117-0216-0352 cut G'", "1117-0088-0352 (3200-2627-0004_G)")),
-    ]
+    PADDLES = ("1117-0040-0352 (3200-2627-0004_A)",)
+    CONVEYOR = ("3613-4008-0048",)
+
+    def y_against_bar(radius):
+        """Ball on the tiles, rolled back until it touches the intake roller bar."""
+        bar = [m for m in meshes if m.name.startswith("3618-4008-0016")]
+        lo, hi = -230.0, -128.0
+        for _ in range(18):
+            mid = (lo + hi) / 2
+            d = min(m.distance(np.array([0.0, mid, FLOOR + radius])) for m in bar) - radius
+            if d >= 0:
+                lo = mid
+            else:
+                hi = mid
+        return lo
+
     rows = []
     print("ball stations (clearance to the nearest part; negative = interference a compliant part must absorb):")
     for ball, dia in BALLS.items():
         r = dia / 2
-        for label, x, y, support in stations:
-            z = rest_height(x, y, r, support) if support else FLOOR + r
-            d, name = nearest(np.array([x, y, z]), r, exclude=support)
+        # S1: on the tiles against the roller bar: how hard do the conveyor wheels have to squeeze?
+        yb = y_against_bar(r)
+        p = np.array([0.0, yb, FLOOR + r])
+        d_conv = min(m.distance(p) for m in meshes if m.name.startswith(CONVEYOR)) - r
+        rows.append({"ball": ball, "station": "on the tiles against the roller bar: conveyor squeeze", "x": 0.0, "y": round(yb, 1),
+                     "z_above_tiles": round(r, 1), "clearance_mm": round(float(d_conv), 1), "nearest": "3613-4008-0048 conveyor"})
+        print(f"   {ball:<22} {'against the roller bar (y=%.0f): conveyor squeeze' % yb:<52} clearance {d_conv:6.1f} mm")
+        # S2: directly under the conveyor axis
+        p = np.array([0.0, -185.5, FLOOR + r])
+        d_conv = min(m.distance(p) for m in meshes if m.name.startswith(CONVEYOR)) - r
+        rows.append({"ball": ball, "station": "under the conveyor axis: conveyor squeeze", "x": 0.0, "y": -185.5,
+                     "z_above_tiles": round(r, 1), "clearance_mm": round(float(d_conv), 1), "nearest": "3613-4008-0048 conveyor"})
+        print(f"   {ball:<22} {'under the conveyor axis: conveyor squeeze':<52} clearance {d_conv:6.1f} mm")
+        # S3..S5: resting on plates, windmill paddles excluded where the windmill sweeps
+        for label, x, y, support, exclude in (
+                ("on the intake ramp E (windmill sweep, paddles excluded)", 0.0, -60.0, ("1117-0088-0352 (3200-2627-0004_E)",), PADDLES),
+                ("hopper floor in front of the wheel (paddles excluded)", -5.0, -35.0,
+                 ("1117-0088-0352 (3200-2627-0004_E)", "1117-0088-0352 (3200-2627-0004_F)"), PADDLES),
+                ("exit guide between the side walls", 0.0, 140.0, ("1117-0216-0352 cut G'", "1117-0088-0352 (3200-2627-0004_G)"), ())):
+            z = rest_height(x, y, r, support)
+            d, name = nearest(np.array([x, y, z]), r, exclude=support + exclude)
             rows.append({"ball": ball, "station": label, "x": x, "y": y, "z_above_tiles": round(z - FLOOR, 1),
                          "clearance_mm": round(float(d), 1), "nearest": name})
             print(f"   {ball:<22} {label:<52} centre {z - FLOOR:6.1f} mm up  clearance {d:6.1f} mm  ({name})")
-        for hood_name, gap in (("hood POLLEN position", gaps[0][1]), ("hood NECTAR position", NECTAR_GAP)):
+        for hood_name, gap in (("hood POLLEN position", stock_gap), ("hood NECTAR position", NECTAR_GAP)):
             rows.append({"ball": ball, "station": f"launcher squeeze, {hood_name}", "clearance_mm": round(gap - dia, 1),
                          "nearest": "3626-0014-0096 / Gridplate H"})
             print(f"   {ball:<22} launcher squeeze, {hood_name:<32} gap {gap:5.1f} mm -> squeeze {dia - gap:5.1f} mm")
