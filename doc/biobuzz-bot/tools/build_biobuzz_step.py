@@ -14,7 +14,7 @@ are kept) and edited in place:
     kit's own servo and ServoBlock), crank and pushrod beams, two intake springs, a colour sensor.
 
 Usage:
-    python3 build_biobuzz_step.py <starterbot.xbf | starterbot.step> <out.step> [--hood-angle DEG]
+    python3 build_biobuzz_step.py <starterbot.step> <out.step> [--hood-angle DEG] [--pcurves]
 
 `--hood-angle` rotates the hood flap open about its hinge (the NECTAR position; see
 clearance_sim.py for the angle that gives the required gap).
@@ -32,6 +32,7 @@ from OCP.BRepBuilderAPI import BRepBuilderAPI_GTransform, BRepBuilderAPI_Transfo
 from OCP.BRepPrimAPI import BRepPrimAPI_MakeBox, BRepPrimAPI_MakeCylinder
 from OCP.gp import gp_Ax1, gp_Ax2, gp_Dir, gp_GTrsf, gp_Mat, gp_Pnt, gp_Trsf, gp_Vec, gp_XYZ
 from OCP.IFSelect import IFSelect_RetDone
+from OCP.Interface import Interface_Static
 from OCP.Quantity import Quantity_Color, Quantity_TOC_RGB
 from OCP.STEPCAFControl import STEPCAFControl_Reader, STEPCAFControl_Writer
 from OCP.STEPControl import STEPControl_AsIs
@@ -275,6 +276,9 @@ def main():
     app, doc = open_doc(src)
     print(f"opened {src}, {time.time() - t0:.0f}s")
     apply_edits(doc, hood_angle)
+    # Leave the parametric (p-)curves out of the file: readers rebuild them, and the file is
+    # roughly half the size. Pass --pcurves to keep them.
+    Interface_Static.SetIVal_s("write.surfacecurve.mode", 1 if "--pcurves" in sys.argv else 0)
     writer = STEPCAFControl_Writer()
     writer.SetColorMode(True)
     writer.SetNameMode(True)
