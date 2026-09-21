@@ -25,14 +25,14 @@ from OCP.IFSelect import IFSelect_RetDone
 from OCP.Quantity import Quantity_Color
 from OCP.STEPCAFControl import STEPCAFControl_Reader
 from OCP.TCollection import TCollection_ExtendedString
-from OCP.TDF import TDF_LabelSequence
+from OCP.TDF import TDF_Label, TDF_LabelSequence
 from OCP.TDocStd import TDocStd_Document
 from OCP.TopAbs import TopAbs_FACE, TopAbs_REVERSED
 from OCP.TopExp import TopExp_Explorer
 from OCP.TopLoc import TopLoc_Location
 from OCP.TopoDS import TopoDS
 from OCP.XCAFApp import XCAFApp_Application
-from OCP.XCAFDoc import XCAFDoc_ColorGen, XCAFDoc_ColorSurf, XCAFDoc_DocumentTool
+from OCP.XCAFDoc import XCAFDoc_ColorGen, XCAFDoc_ColorSurf, XCAFDoc_ColorTool, XCAFDoc_DocumentTool
 
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e1e0d9"
 LIGHT = np.array([0.4, -0.6, 0.7])
@@ -55,15 +55,32 @@ def open_doc(path):
     return doc
 
 
-def face_colour(color_tool, label, face_shape, default):
+def label_colour(color_tool, labels, default):
+    """First surface/generic colour found on the given labels (component, then referred part)."""
     c = Quantity_Color()
-    for ct in (XCAFDoc_ColorSurf, XCAFDoc_ColorGen):
-        if color_tool.GetColor(face_shape, ct, c):
-            return (c.Red(), c.Green(), c.Blue())
-    for ct in (XCAFDoc_ColorSurf, XCAFDoc_ColorGen):
-        if color_tool.GetColor(label, ct, c):
-            return (c.Red(), c.Green(), c.Blue())
+    for lab in labels:
+        for ct in (XCAFDoc_ColorSurf, XCAFDoc_ColorGen):
+            if XCAFDoc_ColorTool.GetColor_s(lab, ct, c):
+                return (c.Red(), c.Green(), c.Blue())
     return default
+
+
+def leaves(shape_tool, label, world, out):
+    """Recursively collect (name, world-located shape, [labels for colour lookup]) for every leaf."""
+    ref = TDF_Label()
+    if shape_tool.IsReference_s(label):
+        shape_tool.GetReferredShape_s(label, ref)
+        world = world * shape_tool.GetLocation_s(label)
+    else:
+        ref = label
+    if shape_tool.IsAssembly_s(ref):
+        comps = TDF_LabelSequence()
+        shape_tool.GetComponents_s(ref, comps)
+        for i in range(1, comps.Length() + 1):
+            leaves(shape_tool, comps.Value(i), world, out)
+    else:
+        shape = shape_tool.GetShape_s(ref).Moved(world)
+        out.append((shape, [label, ref]))
 
 
 def mesh_shape(shape, deflection=0.6):
@@ -101,17 +118,15 @@ def main():
     roots = TDF_LabelSequence()
     shape_tool.GetFreeShapes(roots)
     root = roots.Value(1)
-    comps = TDF_LabelSequence()
-    shape_tool.GetComponents_s(root, comps)
+    parts = []
+    leaves(shape_tool, root, TopLoc_Location(), parts)
     all_v, all_t, all_c = [], [], []
     offset = 0
-    for i in range(1, comps.Length() + 1):
-        lab = comps.Value(i)
-        shape = shape_tool.GetShape_s(lab)
+    for shape, labels in parts:
         v, t = mesh_shape(shape)
         if not len(t):
             continue
-        col = face_colour(color_tool, lab, shape, (0.72, 0.72, 0.72))
+        col = label_colour(color_tool, labels, (0.72, 0.72, 0.72))
         all_v.append(v)
         all_t.append(t + offset)
         all_c.append(np.tile(np.array(col, dtype=np.float32), (len(t), 1)))
@@ -119,7 +134,7 @@ def main():
     V = np.concatenate(all_v)
     T = np.concatenate(all_t)
     C = np.concatenate(all_c)
-    print(f"meshed {comps.Length()} components: {len(V):,} vertices, {len(T):,} triangles, {time.time() - t0:.0f}s")
+    print(f"meshed {len(parts)} leaf parts: {len(V):,} vertices, {len(T):,} triangles, {time.time() - t0:.0f}s")
 
     # face normals for shading (computed in model space)
     p0, p1, p2 = V[T[:, 0]], V[T[:, 1]], V[T[:, 2]]
