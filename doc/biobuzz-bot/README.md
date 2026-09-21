@@ -80,19 +80,21 @@ on the 15-hole base rails, which keeps every bolt on the 8 mm pattern and needs 
 
 ### C. Servo-adjustable hood
 
-Gridplate H becomes a flap: hinge its top-front edge to the two forward arms (the 5-hole low
-channels) with two 5-hole hinges (2902-0005-0038) and drive its lower edge from a torque servo (2000-0025-0002 in positional
-mode, in a Compact ServoBlock on the right tower) through a 9-hole flat beam crank and a second
-9-hole flat beam as pushrod (1102-0009-0072, M4 x 12 screws with nylock nuts as pivots).
+Gridplate H is the flat, back-leaning plate over the launcher: its top edge sits at the tower
+tops (307 mm up, at the towers) and its lower edge is at the front over the intake (175 mm up).
+It becomes a flap: hinge the top edge to the tower tops with two 5-hole hinges (2902-0005-0038)
+and lift the lower front edge with a torque servo (2000-0025-0002 in positional mode, in a
+Compact ServoBlock on the outer face of the right forward arm, near its front end) through a
+9-hole flat beam crank and a second 9-hole flat beam as pushrod (1102-0009-0072, M4 x 12
+screws with nylock nuts as pivots).
 
-| position | wheel-to-hood gap | squeeze | servo position (start value) |
-|---|---|---|---|
-| POLLEN | 47 mm (stock) | 24 mm | `HOOD_POLLEN = 0.30` |
-| NECTAR | about 68 mm | 24 mm | `HOOD_NECTAR = 0.55` |
+| position | wheel-to-hood gap | squeeze | flap angle (from `clearance_sim.py`) | servo position (start value) |
+|---|---|---|---|---|
+| POLLEN | 47 mm (stock) | 24 mm | 0° | `HOOD_POLLEN = 0.30` |
+| NECTAR | 68 mm | 24 mm | see section 8 | `HOOD_NECTAR = 0.55` |
 
-The crank throw needed is about 21 mm at the plate's lower edge. Tune both positions with the
-dpad in TeleOp until each ball leaves cleanly; the same squeeze for both balls keeps the exit
-speed ratio the same, which is why one velocity target serves both.
+Tune both positions with the dpad in TeleOp until each ball leaves cleanly; the same squeeze for
+both balls keeps the exit speed ratio the same, which is why one velocity target serves both.
 
 ### D. Element sensor
 

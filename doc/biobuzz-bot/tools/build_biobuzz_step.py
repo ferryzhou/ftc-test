@@ -255,18 +255,21 @@ def apply_edits(doc, hood_angle=0.0, verbose=True):
         add(box(x - 19, hinge_y - 6, hinge_z, x + 19, hinge_y + 6, hinge_z + 4), "2902-0005-0038 hinge (hood)", steel)
 
     # ---- 4. hood servo + ServoBlock: copies of the kit's own parts on the right tower's outer face ----
-    right_tower = max(towers, key=cx)
-    tx0, ty0, tz0, tx1, ty1, tz1 = bbox(shape_tool.GetShape_s(right_tower["label"]))
+    # The hood's top edge sits at the tower tops; its lower edge is at the front over the intake.
+    # The servo goes on the outer face of the right forward arm (5-hole low channel), near its
+    # front end, so the crank hangs beside the hood's lower edge.
+    right_arm = max(find("1121-0005-0144"), key=cx)
+    ax0, ay0, az0, ax1, ay1, az1 = bbox(shape_tool.GetShape_s(right_arm["label"]))
     servo_src = find("2000-0025-0002")[0]
     block_src = find("3217-0001-2501", lambda o: abs(cx(o)) < 110)[0]
-    servo_target = (tx1 + 14.0, low_y - 10.0, low_z + 60.0)
+    servo_target = (ax1 + 14.0, ay0 + 22.0, (az0 + az1) / 2)
     for src_o, label in ((block_src, "3217-0001-2501 Compact ServoBlock (hood)"),
                          (servo_src, "2000-0025-0002 torque servo (hood)")):
         sc = center(src_o["shape"])
         t = translation(servo_target[0] - sc[0], servo_target[1] - sc[1], servo_target[2] - sc[2])
         add(BRepBuilderAPI_Transform(src_o["shape"], t, True).Shape(), label, black)
     crank_root = (servo_target[0] + 22.0, servo_target[1], servo_target[2])
-    crank_tip = (crank_root[0], crank_root[1] - 20.0, crank_root[2] - 69.0)
+    crank_tip = (crank_root[0], crank_root[1] - 30.0, crank_root[2] - 65.0)
     add(beam_between(crank_root, crank_tip), "1102-0009-0072 flat beam (hood crank)", steel)
     hood_link = (hx1 - 6.0, low_y, low_z + 6.0)
     add(beam_between(crank_tip, hood_link), "1102-0009-0072 flat beam (hood pushrod)", steel)
