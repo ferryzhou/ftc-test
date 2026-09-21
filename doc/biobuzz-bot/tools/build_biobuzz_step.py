@@ -41,7 +41,10 @@ from OCP.TDataStd import TDataStd_Name
 from OCP.TDF import TDF_Label, TDF_LabelSequence
 from OCP.TDocStd import TDocStd_Document
 from OCP.TopLoc import TopLoc_Location
-from OCP.TopoDS import TopoDS_Compound, TopoDS_Shape
+from OCP.TopAbs import TopAbs_VERTEX
+from OCP.TopExp import TopExp_Explorer
+from OCP.TopoDS import TopoDS, TopoDS_Compound, TopoDS_Shape
+from OCP.BRep import BRep_Tool
 from OCP.XCAFApp import XCAFApp_Application
 from OCP.XCAFDoc import XCAFDoc_ColorGen, XCAFDoc_DocumentTool, XCAFDoc_Location
 
@@ -130,6 +133,29 @@ def beam_between(p0, p1, width=8.0, thick=4.0):
     return BRepBuilderAPI_Transform(shape, translation(*p0), True).Shape()
 
 
+def vertices(shape):
+    """All vertex coordinates of a shape as a list of (x, y, z)."""
+    out = []
+    exp = TopExp_Explorer(shape, TopAbs_VERTEX)
+    while exp.More():
+        p = BRep_Tool.Pnt_s(TopoDS.Vertex_s(exp.Current()))
+        out.append((p.X(), p.Y(), p.Z()))
+        exp.Next()
+    return out
+
+
+def hood_edges(hood_shape):
+    """(hinge_y, hinge_z, low_y, low_z): the plate's highest and lowest edges, from its vertices."""
+    vs = vertices(hood_shape)
+    zmax = max(v[2] for v in vs)
+    zmin = min(v[2] for v in vs)
+    top = [v for v in vs if v[2] > zmax - 3.0]
+    low = [v for v in vs if v[2] < zmin + 3.0]
+    hinge_y = sum(v[1] for v in top) / len(top)
+    low_y = sum(v[1] for v in low) / len(low)
+    return hinge_y, zmax, low_y, zmin
+
+
 # ---------------------------------------------------------------- the edit
 
 
@@ -206,7 +232,8 @@ def apply_edits(doc, hood_angle=0.0, verbose=True):
     # ---- 3. hood as a flap hinged along the top-front edge of Gridplate H ----
     h = find("1117-0216-0352 (3200-2627-0004_H)")[0]
     hx0, hy0, hz0, hx1, hy1, hz1 = h["bbox"]
-    hinge_y, hinge_z = hy0, hz1
+    hinge_y, hinge_z, low_y, low_z = hood_edges(h["shape"])
+    log(f"hood top edge at y={hinge_y:.1f} z={hinge_z:.1f}, lower edge at y={low_y:.1f} z={low_z:.1f}")
     if abs(hood_angle) > 1e-6:
         loc = shape_tool.GetLocation_s(h["label"])
         XCAFDoc_Location.Set_s(h["label"], TopLoc_Location(rotation((0, hinge_y, hinge_z), (1, 0, 0), hood_angle)) * loc)
@@ -232,7 +259,7 @@ def apply_edits(doc, hood_angle=0.0, verbose=True):
     tx0, ty0, tz0, tx1, ty1, tz1 = bbox(shape_tool.GetShape_s(right_tower["label"]))
     servo_src = find("2000-0025-0002")[0]
     block_src = find("3217-0001-2501", lambda o: abs(cx(o)) < 110)[0]
-    servo_target = (tx1 + 14.0, hy1 - 20.0, hz0 + 60.0)
+    servo_target = (tx1 + 14.0, low_y - 10.0, low_z + 60.0)
     for src_o, label in ((block_src, "3217-0001-2501 Compact ServoBlock (hood)"),
                          (servo_src, "2000-0025-0002 torque servo (hood)")):
         sc = center(src_o["shape"])
@@ -241,7 +268,7 @@ def apply_edits(doc, hood_angle=0.0, verbose=True):
     crank_root = (servo_target[0] + 22.0, servo_target[1], servo_target[2])
     crank_tip = (crank_root[0], crank_root[1] - 20.0, crank_root[2] - 69.0)
     add(beam_between(crank_root, crank_tip), "1102-0009-0072 flat beam (hood crank)", steel)
-    hood_link = (hx1 - 6.0, hy1 - 8.0, hz0 + 8.0)
+    hood_link = (hx1 - 6.0, low_y, low_z + 6.0)
     add(beam_between(crank_tip, hood_link), "1102-0009-0072 flat beam (hood pushrod)", steel)
 
     # ---- 5. intake springs: from the conveyor carrier down to the side rails ----
@@ -265,6 +292,7 @@ def apply_edits(doc, hood_angle=0.0, verbose=True):
     TDataStd_Name.Set_s(root, TCollection_ExtendedString("biobuzz-bot (from 3200-2627-0004)"))
     log("added: " + ", ".join(new_parts))
     return {"root": root, "shape_tool": shape_tool, "hood": h["label"], "hinge": (hinge_y, hinge_z),
+            "hood_low": (low_y, low_z),
             "wheel": find("3626-0014-0096")[0]["label"], "towers": [o["label"] for o in towers],
             "guide": g["label"], "walls": [o["label"] for o in walls], "occ": occ}
 
