@@ -1,6 +1,70 @@
 {
  "hood_gap_vs_angle_deg_mm": [
   [
+   -16,
+   70.11
+  ],
+  [
+   -15,
+   69.13
+  ],
+  [
+   -14,
+   68.12
+  ],
+  [
+   -13,
+   66.4
+  ],
+  [
+   -12,
+   65.65
+  ],
+  [
+   -11,
+   64.76
+  ],
+  [
+   -10,
+   62.93
+  ],
+  [
+   -9,
+   60.94
+  ],
+  [
+   -8,
+   59.92
+  ],
+  [
+   -7,
+   59.04
+  ],
+  [
+   -6,
+   57.56
+  ],
+  [
+   -5,
+   55.88
+  ],
+  [
+   -4,
+   54.2
+  ],
+  [
+   -3,
+   52.51
+  ],
+  [
+   -2,
+   50.86
+  ],
+  [
+   -1,
+   49.2
+  ],
+  [
    0,
    47.53
   ],
@@ -19,89 +83,45 @@
   [
    4,
    40.63
-  ],
-  [
-   5,
-   38.93
-  ],
-  [
-   6,
-   37.1
-  ],
-  [
-   7,
-   35.26
-  ],
-  [
-   8,
-   33.41
-  ],
-  [
-   9,
-   31.52
-  ],
-  [
-   10,
-   29.63
-  ],
-  [
-   11,
-   27.67
-  ],
-  [
-   12,
-   25.7
-  ],
-  [
-   13,
-   23.74
-  ],
-  [
-   14,
-   21.74
-  ],
-  [
-   15,
-   19.72
   ]
  ],
- "nectar_hood_angle_deg": null,
+ "nectar_hood_angle_deg": -13.930232558139533,
  "stations": [
   {
    "ball": "POLLEN 71",
-   "station": "intake mouth, on the tiles in front of the roller bar",
+   "station": "on the tiles against the roller bar: conveyor squeeze",
    "x": 0.0,
-   "y": -160.0,
+   "y": -171.2,
    "z_above_tiles": 35.5,
-   "clearance_mm": -11.0,
-   "nearest": "3618-4008-0016 (Stretched over 8 REX):8"
+   "clearance_mm": -4.7,
+   "nearest": "3613-4008-0048 conveyor"
   },
   {
    "ball": "POLLEN 71",
-   "station": "under the Gecko conveyor, on the tiles",
+   "station": "under the conveyor axis: conveyor squeeze",
    "x": 0.0,
    "y": -185.5,
    "z_above_tiles": 35.5,
    "clearance_mm": -6.4,
-   "nearest": "3613-4008-0048:5"
+   "nearest": "3613-4008-0048 conveyor"
   },
   {
    "ball": "POLLEN 71",
-   "station": "on the intake ramp E",
+   "station": "on the intake ramp E (windmill sweep, paddles excluded)",
    "x": 0.0,
    "y": -60.0,
    "z_above_tiles": 77.0,
-   "clearance_mm": -24.5,
-   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+   "clearance_mm": 25.2,
+   "nearest": "1117-0088-0352 (3200-2627-0004_G):1"
   },
   {
    "ball": "POLLEN 71",
-   "station": "hopper floor in front of the wheel",
+   "station": "hopper floor in front of the wheel (paddles excluded)",
    "x": -5.0,
    "y": -35.0,
    "z_above_tiles": 76.0,
-   "clearance_mm": -7.6,
-   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+   "clearance_mm": 7.2,
+   "nearest": "1117-0088-0352 (3200-2627-0004_G):1"
   },
   {
    "ball": "POLLEN 71",
@@ -126,39 +146,39 @@
   },
   {
    "ball": "NECTAR 92",
-   "station": "intake mouth, on the tiles in front of the roller bar",
+   "station": "on the tiles against the roller bar: conveyor squeeze",
    "x": 0.0,
-   "y": -160.0,
+   "y": -182.4,
    "z_above_tiles": 46.0,
-   "clearance_mm": -22.4,
-   "nearest": "3618-4008-0016 (Stretched over 8 REX):8"
+   "clearance_mm": -27.2,
+   "nearest": "3613-4008-0048 conveyor"
   },
   {
    "ball": "NECTAR 92",
-   "station": "under the Gecko conveyor, on the tiles",
+   "station": "under the conveyor axis: conveyor squeeze",
    "x": 0.0,
    "y": -185.5,
    "z_above_tiles": 46.0,
    "clearance_mm": -27.0,
-   "nearest": "3613-4008-0048:5"
+   "nearest": "3613-4008-0048 conveyor"
   },
   {
    "ball": "NECTAR 92",
-   "station": "on the intake ramp E",
+   "station": "on the intake ramp E (windmill sweep, paddles excluded)",
    "x": 0.0,
    "y": -60.0,
    "z_above_tiles": 87.4,
-   "clearance_mm": -37.8,
-   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+   "clearance_mm": 21.4,
+   "nearest": "1117-0088-0352 (3200-2627-0004_G):1"
   },
   {
    "ball": "NECTAR 92",
-   "station": "hopper floor in front of the wheel",
+   "station": "hopper floor in front of the wheel (paddles excluded)",
    "x": -5.0,
    "y": -35.0,
    "z_above_tiles": 86.4,
-   "clearance_mm": -19.3,
-   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+   "clearance_mm": 5.7,
+   "nearest": "1117-0088-0352 (3200-2627-0004_G):1"
   },
   {
    "ball": "NECTAR 92",
@@ -183,39 +203,39 @@
   },
   {
    "ball": "NECTAR 95 (oversize)",
-   "station": "intake mouth, on the tiles in front of the roller bar",
+   "station": "on the tiles against the roller bar: conveyor squeeze",
    "x": 0.0,
-   "y": -160.0,
+   "y": -183.9,
    "z_above_tiles": 47.5,
-   "clearance_mm": -23.7,
-   "nearest": "3618-4008-0016 (Stretched over 8 REX):8"
+   "clearance_mm": -30.1,
+   "nearest": "3613-4008-0048 conveyor"
   },
   {
    "ball": "NECTAR 95 (oversize)",
-   "station": "under the Gecko conveyor, on the tiles",
+   "station": "under the conveyor axis: conveyor squeeze",
    "x": 0.0,
    "y": -185.5,
    "z_above_tiles": 47.5,
    "clearance_mm": -30.0,
-   "nearest": "3613-4008-0048:5"
+   "nearest": "3613-4008-0048 conveyor"
   },
   {
    "ball": "NECTAR 95 (oversize)",
-   "station": "on the intake ramp E",
+   "station": "on the intake ramp E (windmill sweep, paddles excluded)",
    "x": 0.0,
    "y": -60.0,
    "z_above_tiles": 89.0,
-   "clearance_mm": -39.4,
-   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+   "clearance_mm": 20.9,
+   "nearest": "1201-0043-0002:8"
   },
   {
    "ball": "NECTAR 95 (oversize)",
-   "station": "hopper floor in front of the wheel",
+   "station": "hopper floor in front of the wheel (paddles excluded)",
    "x": -5.0,
    "y": -35.0,
    "z_above_tiles": 88.0,
-   "clearance_mm": -20.8,
-   "nearest": "1117-0040-0352 (3200-2627-0004_A):2"
+   "clearance_mm": 5.5,
+   "nearest": "1117-0088-0352 (3200-2627-0004_G):1"
   },
   {
    "ball": "NECTAR 95 (oversize)",

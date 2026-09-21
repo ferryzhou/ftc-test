@@ -53,9 +53,10 @@ against the ramp; NECTAR would need 28 mm, which drives change A.
 
 Keep the 48 mm Gecko conveyor but let its 8-hole U-channel carrier (assembly steps 19 to 25)
 pivot on the two 80 mm REX shafts in the 1-hole U-channels (step 29), instead of being bolted
-solid in step 31. Hard stop at the stock height, so POLLEN is squeezed 7 mm as today. Two
-extension springs (2915-0001-0003, 1.5 kg) from the carrier to the 15-hole base channel pull it
-down; a NECTAR lifts it about 20 mm against the springs and is still gripped. Set the spring
+solid in step 31. Hard stop at the stock height, so POLLEN is squeezed 5 to 6 mm as today
+(measured in section 9). Two extension springs (2915-0001-0003, 1.5 kg) from the carrier to the
+15-hole base channel pull it down; a NECTAR would need 27 mm of squeeze at the stock height, so it
+lifts the carrier about 21 mm against the springs and is gripped with the same 6 mm. Set the spring
 hooks so the springs are near their 39 mm free length at the hard stop. Check the raised
 position stays under 18 in during inspection (it adds nothing above the 307 mm top).
 
@@ -90,11 +91,13 @@ screws with nylock nuts as pivots).
 
 | position | wheel-to-hood gap | squeeze | flap angle (from `clearance_sim.py`) | servo position (start value) |
 |---|---|---|---|---|
-| POLLEN | 47 mm (stock) | 24 mm | 0° | `HOOD_POLLEN = 0.30` |
-| NECTAR | 68 mm | 24 mm | see section 8 | `HOOD_NECTAR = 0.55` |
+| POLLEN | 47.5 mm (stock) | 24 mm | 0° | `HOOD_POLLEN = 0.30` |
+| NECTAR | 68 mm | 24 mm | 13.9° open | `HOOD_NECTAR = 0.55` |
 
-Tune both positions with the dpad in TeleOp until each ball leaves cleanly; the same squeeze for
-both balls keeps the exit speed ratio the same, which is why one velocity target serves both.
+The lower edge is 216 mm from the hinge, so the NECTAR position lifts it about 52 mm; a 72 mm
+crank arm covers that with margin. Tune both positions with the dpad in TeleOp until each ball
+leaves cleanly; the same squeeze for both balls keeps the exit speed ratio the same, which is why
+one velocity target serves both.
 
 ### D. Element sensor
 
@@ -125,7 +128,7 @@ for NECTAR is the energy taken from the wheel per shot:
 | NECTAR | 0.94 J | 0.278 kg m/s |
 
 so the wheel droops more after each NECTAR. Both balls use the same 1250 ticks/s target: the
-shot simulation (section 8) showed that a 4 % higher NECTAR target moves its landing point
+shot simulation (section 9.2) showed that a 4 % higher NECTAR target moves its landing point
 0.4 m further out, so the two would need different aim points. Instead the code does not feed
 until the wheel is back above the minimum, goBILDA's "wait for speed" logic applied per
 element. The exit angle and the CELL band are estimates: measure the hood angle on the built
@@ -185,6 +188,84 @@ Every number lives in `BioBuzzConfig.java`. Tuning order on the robot:
 ## 7. Open items
 
 - The exit angle of the hood and the exact height of the upward CELL opening are estimates.
-- The floating intake pivot is described, not modelled; check it against the 18 in cube.
+- The floating intake pivot is described and drawn as springs, not modelled as a mechanism;
+  check its raised position against the 18 in cube.
 - Feed counting is time based. A second sensor at the launcher exit would make it exact.
 - FLOWER scoring (placing into a 102 mm opening at 546 mm) is not addressed by this build.
+- The flywheel inertia in the shot simulation is an estimate (no mass data in the STEP).
+
+## 8. STEP model and render
+
+`tools/build_biobuzz_step.py` opens goBILDA's STEP with OpenCascade XDE (the assembly tree,
+part names and colours survive) and edits it in place: it moves the towers and everything bolted
+to them, re-cuts the exit guide 112 mm wide, hinges the hood, and adds the hinges, the hood servo
+and ServoBlock (copies of the kit's own parts), the crank and pushrod beams, the two intake
+springs and the colour sensor as simplified solids. The result, `biobuzz-bot.step`, is a 496 MB
+AP214 file (82 MiB zipped) with 1,263 leaf parts; it is too large for this repository and was
+delivered separately, and rebuilds in about five minutes:
+
+```bash
+pip install cadquery                                   # brings the OCP OpenCascade bindings
+python3 tools/build_biobuzz_step.py 3200-2627-0004.step biobuzz-bot.step
+python3 tools/build_biobuzz_step.py 3200-2627-0004.step hood-open.step --hood-angle -13.9
+python3 tools/render_step.py biobuzz-bot.step render_biobuzz_bot.png
+```
+
+`tools/render_step.py` meshes every leaf part (8.7 M triangles) and draws four shaded views in
+the STEP colours:
+
+![render](render_biobuzz_bot.png)
+
+The same model with the hood flap in the NECTAR position:
+
+![render, hood open](render_biobuzz_bot_hood_open.png)
+
+## 9. Simulations
+
+### 9.1 Ball-path clearance (`tools/clearance_sim.py`, exact geometry from the edited model)
+
+The parts around the ball path are meshed at 0.4 mm and every clearance below is a
+point-to-triangle distance on those meshes. The hood flap is swept about its hinge and the
+gap to the Hogback wheel measured (chart), then POLLEN, NECTAR and an oversize NECTAR are
+placed at stations along the path.
+
+![hood gap](sim_hood_gap.png)
+
+| station | POLLEN 71 | NECTAR 92 | NECTAR 95 | reading |
+|---|---|---|---|---|
+| on the tiles against the roller bar, conveyor squeeze | -4.7 | -27.2 | -30.1 | change A: the carrier floats 21 to 24 mm |
+| under the conveyor axis, conveyor squeeze | -6.4 | -27.0 | -30.0 | same |
+| on the intake ramp E (windmill paddles excluded) | +25.2 | +21.4 | +20.9 | clear |
+| hopper floor in front of the wheel (paddles excluded) | +7.2 | +5.7 | +5.5 | clear, tightest point is the guide's lower end |
+| exit guide between the side walls | +17.4 | +9.1 | +7.9 | clear; nearest part is the wheel |
+| launcher squeeze, hood at 0° (47.5 mm gap) | 23.6 | 44.4 | 47.5 | POLLEN setting; NECTAR would jam |
+| launcher squeeze, hood at 13.9° open (68 mm gap) | 3.1 | 23.9 | 27.0 | NECTAR setting |
+
+Negative numbers are interference a compliant part must absorb; the two conveyor rows are the
+whole case for the floating intake. Full numbers are in `clearance_sim.json`.
+
+### 9.2 Launcher dynamics and shot dispersion (`tools/shot_sim.py`)
+
+A linear DC-motor model of the bare 6000 rpm Yellow Jacket driving the Hogback wheel through
+the SDK velocity PIDF (P = 40, F = 12.5), with an estimated wheel inertia of 1.7e-4 kg m², and a
+per-shot energy draw of 1.5 times the ball's kinetic energy:
+
+![flywheel](sim_flywheel.png)
+
+| | POLLEN | NECTAR |
+|---|---|---|
+| spin-up to the 1200 ticks/s minimum | 0.66 s | 0.66 s |
+| velocity droop per shot | 78 ticks/s | 133 ticks/s |
+| gap between shots once recovered | 0.15 s | 0.21 s |
+
+Four NECTAR leave in under a second; the code's wait-for-minimum gate is what keeps the exit
+speed consistent. A Monte Carlo of 400 shots per distance (exit speed ±3 %, exit angle ±2°,
+ball diameter ±2 %) counts a hit when the descending ball crosses the CELL opening plane inside
+its 12 in depth:
+
+![hit probability](sim_hit_probability.png)
+
+At the shared 1250 ticks/s both balls peak at 35 % from 2.6 m; the dashed ±10 % velocity curves
+move the sweet spot by about 0.5 m either way. The peak is limited by the ±3 % speed jitter,
+which is why the velocity gate matters more than the hood for accuracy. The CELL height and
+exit angle are the same estimates as in section 4.
