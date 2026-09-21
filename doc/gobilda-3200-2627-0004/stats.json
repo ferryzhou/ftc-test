@@ -1,0 +1,49 @@
+{
+ "entities": 4314214,
+ "products": 377,
+ "occurrences": 1392,
+ "tree_nodes": 1475,
+ "leaf_parts": 1174,
+ "top_level_items": 155,
+ "top_level_lines": 91,
+ "purchase_lines": 58,
+ "purchase_units": 436,
+ "fasteners_total": 384,
+ "max_depth": 5,
+ "category_top_level": {
+  "Wheels": 30,
+  "Structure": 66,
+  "Fasteners": 4,
+  "Motion": 43,
+  "Actuators": 9,
+  "Electronics": 1,
+  "Other": 2
+ },
+ "category_leaf": {
+  "Motion": 221,
+  "Fasteners": 611,
+  "Wheels": 170,
+  "Actuators": 84,
+  "Structure": 65,
+  "Other": 22,
+  "Electronics": 1
+ },
+ "bbox_mm": {
+  "min": [
+   -225.89999389648438,
+   -260.0,
+   -52.0
+  ],
+  "max": [
+   226.1999969482422,
+   192.0,
+   256.0
+  ],
+  "size": [
+   452.1000061035156,
+   452.0,
+   308.0
+  ]
+ },
+ "wireframe_segments": 2470782
+}
