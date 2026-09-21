@@ -1,0 +1,13 @@
+sku,name,qty,purpose,source
+1121-0007-0192,1121 Series Low-Side U-Channel (7 Hole 192mm Length),1,Replaces the 5-hole top cross channel so the two tower channels can move 12 mm outboard (chute widened from 88 mm to 112 mm),gobilda.com
+1117-0216-0352,Clear Polycarbonate Grid Plate (1.5mm Thickness 27 x 44 Hole 216 x 352mm),1,Cut the wider chute ramp G' (13 x 35 holes = 104 x 280 mm) and a wider hopper floor F' (13 x 9),gobilda.com
+2000-0025-0002,2000 Series Dual Mode Servo (25-2 Torque),1,Hood servo (positional mode) that sets the launcher gap for POLLEN or NECTAR,gobilda.com
+3217-0001-2501,Compact ServoBlock (43mm Width For Standard Size H25T Spline Servo Hub-Shaft),1,Mounts the hood servo on the tower channel,gobilda.com
+1102-0009-0072,1102 Series Flat Beam (9 Hole 72mm Length) - 2 Pack,1,Servo crank (one beam) and pushrod (one beam) for the hood,gobilda.com
+2902-0005-0038,2902 Series Hinge (5 Hole 38mm Length),2,Hinge the top edge of Gridplate H so the hood pivots,gobilda.com
+2915-0001-0003,Extension Spring (6.5mm OD 1.5kg Max Load 39-72mm Length),2,Preload for the floating Gecko-wheel intake roller,gobilda.com
+2800-0004-0012,M4 x 0.7mm Zinc-Plated Socket Head Screw (12mm Length) - 25 Pack,1,Pivot screws for the hood linkage and tower relocation,inferred
+2812-0004-0007,2812 Series Zinc-Plated Steel Nylock Nut (M4 x 0.7mm 7mm Hex),1,Locknuts for the hood linkage pivots (pack),inferred
+2909-0101-0100,Zip Tie (100mm Length Black) - 100 Pack,1,Re-tying every gridplate after the chute is widened,gobilda.com
+REV-31-1557,REV Color Sensor V3,1,Element sensor in the chute wall: classifies POLLEN / NECTAR and detects presence,REV Robotics
+REV-31-1408,REV JST PH 4-pin sensor cable (I2C),1,Connects the colour sensor to a Control Hub I2C port,REV Robotics (verify part number)

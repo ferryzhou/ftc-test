@@ -1,0 +1,185 @@
+# BIOBUZZ bot: StarterBot 3200-2627-0004 with POLLEN and NECTAR intake and launching
+
+This folder is a new build derived from the goBILDA FTC StarterBot with Mecanum Wheels
+(3200-2627-0004, torn down in [`../gobilda-3200-2627-0004/`](../gobilda-3200-2627-0004/README.md)).
+The basis is left untouched. The stock StarterBot intakes and launches POLLEN only; the changes
+here make the same robot intake and launch NECTAR too, and add the software that tells the two
+apart. Robot code lives in
+[`TeamCode/.../teamcode/biobuzz/`](../../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/biobuzz/).
+
+## 1. What the game asks of the robot
+
+Source: BIOBUZZ Competition Manual V1, sections 9 to 12 (fetched 2026-09-21).
+
+| item | value | consequence for the design |
+|---|---|---|
+| POLLEN | 2.8 in (71 mm) yellow ball, 24.9 g, 40 per match | stock StarterBot size |
+| NECTAR | 3.6 in (92 mm) red or blue ball, 41.3 g, 8 per alliance | 21 mm larger, 66 % heavier, colour matters |
+| element size varies (9.8) | "not perfectly spherical and may vary" | leave clearance, use compliant wheels |
+| G407 | never CONTROL more than 4 elements | intake stops at four, guards on top |
+| G408 | never CONTROL opponent NECTAR | sense colour at the chute and spit the wrong colour out |
+| G417 | HIVE tips only by LAUNCHING into the upward CELL | launcher must reach the cell for both balls |
+| G410 | NECTAR into FLOWERS only in the last 60 s | driver rule, no hardware impact |
+| HIVE (9.6) | pivot axis 43.95 in (1.12 m) above the tiles, CELL opening 20 x 14 x 12 in | target roughly 1.3 to 1.55 m high, verify on a field |
+| FLOWER (9.7) | top opening 4 in (102 mm) at 21.5 in (546 mm), NECTAR fits | out of scope here; the launcher is the scoring path |
+| R102 | starting configuration 18 x 18 x 18 in | StarterBot is 452 x 452 x 308 mm, so nothing may grow |
+| R105 | expansion 18 x 24 x 29 in | hood and floating intake stay inside |
+| 10.3.1 | 4 POLLEN pre-loaded per robot | auto launches four |
+
+## 2. What the StarterBot already does, measured from the STEP file
+
+Numbers are millimetres above the tiles, taken from the wireframe in the teardown.
+
+| feature | measurement |
+|---|---|
+| front intake roller bar (16 x 16 mm rollers on the 264 mm REX shaft) | axis 44 mm high, 264 mm wide |
+| Gecko-wheel conveyor (7 x 48 mm on the 240 mm REX shaft) | axis 88 mm high, wheel bottom 64 mm, driven at 585 rpm (117 rpm motor through 100T:20T) |
+| intake ramp, Gridplate E | 30 to 65 mm high |
+| chute between the two vertical 10-hole tower channels | 88 mm inside width, side walls are Gridplates C |
+| curved chute ramp, Gridplate G | 88 mm wide, 11 x 35 holes |
+| windmill feeder (torque servo, four 40 x 96 mm paddles A) | in the chute below the wheel |
+| launcher wheel, 96 mm Hogback on a 1:1 Yellow Jacket | axis 172 mm high, 24 mm wide |
+| hood, Gridplate H (176 x 216 mm) above and in front of the wheel | tightest gap to the wheel 47 mm |
+| top of the robot | 307 mm |
+
+The 47 mm gap compresses a 71 mm POLLEN by 24 mm. A 92 mm NECTAR would need 45 mm of
+compression and will jam, and a 92 mm ball cannot enter an 88 mm chute at all. Those two
+numbers drive changes B and C below. The intake conveyor grabs POLLEN with 7 mm of squeeze
+against the ramp; NECTAR would need 28 mm, which drives change A.
+
+## 3. The changes
+
+### A. Floating intake conveyor (NECTAR and POLLEN with one roller)
+
+Keep the 48 mm Gecko conveyor but let its 8-hole U-channel carrier (assembly steps 19 to 25)
+pivot on the two 80 mm REX shafts in the 1-hole U-channels (step 29), instead of being bolted
+solid in step 31. Hard stop at the stock height, so POLLEN is squeezed 7 mm as today. Two
+extension springs (2915-0001-0003, 1.5 kg) from the carrier to the 15-hole base channel pull it
+down; a NECTAR lifts it about 20 mm against the springs and is still gripped. Set the spring
+hooks so the springs are near their 39 mm free length at the hard stop. Check the raised
+position stays under 18 in during inspection (it adds nothing above the 307 mm top).
+
+Fallback if the pivot is not wanted: raise the conveyor 8 mm (one hole) and rely on the 30A
+Gecko wheels; POLLEN then only gets 0 to 2 mm of squeeze and intake reliability drops.
+
+### B. Wider chute (112 mm inside)
+
+1. Move each vertical 10-hole tower channel 12 mm outboard (1.5 holes on the 8 mm grid, so the
+   small holes still line up on the 15-hole base channels). Tower centres go from x = ±68 mm to
+   ±80 mm.
+2. Replace the 5-hole low channel across the top (1121-0005-0144) with a 7-hole low channel
+   (1121-0007-0192): its patterns at ±80 mm land on the new tower centres.
+3. Cut a new chute ramp G' 13 x 35 holes (104 x 280 mm) and a hopper floor F' 13 x 9 holes from
+   one extra large gridplate (1117-0216-0352) using the step 41 to 49 zip-tie pattern. Side
+   walls C stay on the tower inner faces, now 112 mm apart, which leaves 20 mm for out-of-round
+   NECTAR.
+4. The windmill paddles (96 mm along the axis) and the 24 mm wide Hogback wheel are unchanged;
+   the launcher motor mount moves with its tower.
+
+### C. Servo-adjustable hood
+
+Gridplate H becomes a flap: hinge its top edge to the top cross channel with two 5-hole hinges
+(2902-0005-0038) and drive its lower edge from a torque servo (2000-0025-0002 in positional
+mode, in a Compact ServoBlock on the right tower) through a 9-hole flat beam crank and a second
+9-hole flat beam as pushrod (1102-0009-0072, M4 x 12 screws with nylock nuts as pivots).
+
+| position | wheel-to-hood gap | squeeze | servo position (start value) |
+|---|---|---|---|
+| POLLEN | 47 mm (stock) | 24 mm | `HOOD_POLLEN = 0.30` |
+| NECTAR | about 68 mm | 24 mm | `HOOD_NECTAR = 0.55` |
+
+The crank throw needed is about 21 mm at the plate's lower edge. Tune both positions with the
+dpad in TeleOp until each ball leaves cleanly; the same squeeze for both balls keeps the exit
+speed ratio the same, which is why the two velocity targets are within 4 % of each other.
+
+### D. Element sensor
+
+A REV Color Sensor V3 in a hole of side wall C, about 30 mm before the windmill, sees every
+ball once. Its distance reading gives presence, its hue gives POLLEN (yellow), red NECTAR or
+blue NECTAR. Software then:
+
+- counts elements in and out (G407 guard, intake stops at four),
+- reverses the intake for 0.7 s when the wrong alliance colour is seen (G408),
+- keeps a first-in-first-out queue so the hood and wheel speed are set for the ball that is
+  about to be fed.
+
+## 4. Launch physics: one speed setting for both balls
+
+`tools/trajectory.py` integrates both balls with quadratic drag. The ballistic coefficient
+(half rho Cd A / m) is 0.0450 /m for POLLEN and 0.0453 /m for NECTAR: NECTAR has 68 % more
+frontal area and 66 % more mass, so the two fly the same path at the same exit speed.
+
+![trajectory](trajectory.png)
+
+At goBILDA's stock 1250 ticks/s (2679 rpm, 13.5 m/s surface speed, about 6.7 m/s ball speed)
+a 50 degree exit peaks at 1.55 m about 2 m out, inside the estimated CELL band. What changes
+for NECTAR is the energy taken from the wheel per shot:
+
+| ball | kinetic energy per shot | momentum |
+|---|---|---|
+| POLLEN | 0.56 J | 0.168 kg m/s |
+| NECTAR | 0.94 J | 0.278 kg m/s |
+
+so the wheel droops more after each NECTAR. The code sets a 4 % higher target for NECTAR and
+does not feed until the wheel is back above its minimum, which is the same "wait for speed"
+logic goBILDA uses, just per element. The exit angle and the CELL band are estimates: measure
+the hood angle on the built robot and check the shot on a real HIVE.
+
+## 5. Control system
+
+Hardware configuration (names match goBILDA's mecanum StarterBot sample, plus two new devices):
+
+| name | device | port suggestion |
+|---|---|---|
+| `Front_Left`, `Rear_Left` | 19.2:1 Yellow Jacket, REVERSE | Control Hub motors 0, 1 |
+| `Front_Right`, `Rear_Right` | 19.2:1 Yellow Jacket, FORWARD | Control Hub motors 2, 3 |
+| `launcher` | 1:1 converted Yellow Jacket, encoder required | Expansion Hub motor 0 |
+| `intake` | 50.9:1 Yellow Jacket conveyor | Expansion Hub motor 1 |
+| `left_intake_servo`, `right_intake_servo` | 2000-0025-0003 in continuous mode | servo 0, 1 |
+| `windmill` | 2000-0025-0002 in continuous mode, REVERSE | servo 2 |
+| `hood` (new) | 2000-0025-0002 in positional mode | servo 3 |
+| `element_sensor` (new) | REV Color Sensor V3 | I2C bus 1 |
+
+Op modes:
+
+- **BioBuzz TeleOp**: left stick drive/strafe, right stick rotate, left bumper slow mode,
+  right/left trigger intake in/out, right bumper spin up and feed, A launcher off, dpad up/down
+  hood trim, Y clear the element estimate, Back set the estimate to four. X/B before start
+  choose blue/red.
+- **BioBuzz Auto**: launches the four pre-loaded POLLEN, then drives off the wall for LEAVE.
+  Time based; the two constants at the top of the file are the only tuning.
+
+Every number lives in `BioBuzzConfig.java`. Tuning order on the robot:
+
+1. Hood: with the launcher off, feed a POLLEN by hand and adjust `HOOD_POLLEN` until the ball
+   is squeezed but the windmill can push it through; repeat with NECTAR for `HOOD_NECTAR`.
+2. Sensor: read the `Sensor` telemetry line with each ball in the chute and adjust the hue
+   bands and `SENSOR_PRESENT_MM` if needed.
+3. Velocity: shoot at the HIVE from the launch spot and adjust the two `LAUNCH_VELOCITY_*`
+   targets; keep the minimums about 50 ticks/s below the targets.
+4. Feed timing: if the element count drifts, adjust `FEED_SECONDS_PER_ELEMENT`.
+
+## 6. Bill of materials
+
+- `bom_delta.csv`: the 13 lines to buy on top of the starter kit.
+- `bom_biobuzz_bot.csv`: the full purchase list, starter kit plus delta (one 5-hole low
+  channel is removed), generated by `tools/make_bom.py`.
+
+| sku | qty | purpose |
+|---|---|---|
+| 1121-0007-0192 | 1 | 7-hole top cross channel for the wider towers |
+| 1117-0216-0352 | 1 | wider chute ramp and hopper floor |
+| 2000-0025-0002 | 1 | hood servo |
+| 3217-0001-2501 | 1 | hood servo mount |
+| 1102-0009-0072 | 1 pack | hood crank and pushrod |
+| 2902-0005-0038 | 2 | hood hinges |
+| 2915-0001-0003 | 2 | floating intake springs |
+| 2800-0004-0012, 2812-0004-0007, 2909-0101-0100 | 1 pack each | pivots and zip ties |
+| REV-31-1557 (+ JST PH cable) | 1 | element sensor |
+
+## 7. Open items
+
+- The exit angle of the hood and the exact height of the upward CELL opening are estimates.
+- The floating intake pivot is described, not modelled; check it against the 18 in cube.
+- Feed counting is time based. A second sensor at the launcher exit would make it exact.
+- FLOWER scoring (placing into a 102 mm opening at 546 mm) is not addressed by this build.
